@@ -29,29 +29,28 @@ ele_file = directory + "/A.1.ele"
 
 f = open(ele_file, 'r')
 first_line = f.readline().strip()
-num_elements = int(first_line.split(" ")[0])
+num_elements = int(first_line.split()[0])
 print('num_elements: %d' % num_elements)
 
-# line = f.readline().strip()
+#line = f.readline().strip()
 # num_edges = int(line.split(" ")[0])
 # print('num_edges: ', num_edges)
 
-# for i in range(num_vertices):
-#     line = f.readline().strip()
-#     temp = line.split(" ")    
-#     vertex1_index = int(temp[1]) - 1
-#     vertex2_index = int(temp[2]) - 1
+triangles = []
+for i in range(num_elements):
+    line = f.readline().strip()
+    temp = line.split()    
+    triangle = [int(temp[1])-1, int(temp[2])-1, int(temp[3])-1]
+    triangles.append(triangle)
+    print(triangle)
+    #print("triangle: %d %d %d" % (int(temp[0]), int(temp[1]), int(temp[2])))
 
-#     print_str = "%d %d\n" % (vertex1_index, vertex2_index)
-#     print(print_str)    
+import matplotlib.tri as mtri
 
-#     vertex1 = (x_coords[vertex1_index], y_coords[vertex1_index])
-#     vertex2 = (x_coords[vertex2_index], y_coords[vertex2_index])
-#     #x_coords.append(x_coord)
-#     #y_coords.append(y_coord)
-#     ax.plot([vertex1[0], vertex2[0]], [vertex1[1], vertex2[1]])
-
-
+triang = mtri.Triangulation(x_coords, y_coords, triangles)
+plt.title("triangular grid")
+plt.triplot(triang, 'ko-')
+plt.show()
 
 # # plt.xlim([0, 1.0])
 # # plt.ylim([0, 1.0])
