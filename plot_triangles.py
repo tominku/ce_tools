@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 directory = os.getcwd()
 
-poly_file = directory + "/A.poly"
+exp_name = "A.1"
+poly_file = directory + "/%s.node" % exp_name
 
 f = open(poly_file, 'r')
 first_line = f.readline().strip()
@@ -16,7 +17,7 @@ x_coords = []
 y_coords = []
 for i in range(num_vertices):
     line = f.readline().strip()
-    temp = line.split(" ")
+    temp = line.split()
     x_coord = float(temp[1])
     y_coord = float(temp[2])
     x_coords.append(x_coord)
@@ -25,7 +26,7 @@ for i in range(num_vertices):
     print(print_str)    
 
 
-ele_file = directory + "/A.1.ele"
+ele_file = directory + "/%s.ele" % exp_name
 
 f = open(ele_file, 'r')
 first_line = f.readline().strip()
