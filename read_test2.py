@@ -15,11 +15,13 @@ x_coords = []
 y_coords = []
 for i in range(num_vertices):
     line = f.readline().strip()
-    x_coord = line.split(" ")[1]    
-    y_coord = line.split(" ")[2]
+    temp = line.split(" ")
+    x_coord = float(temp[1])
+    y_coord = float(temp[2])
     x_coords.append(x_coord)
     y_coords.append(y_coord)
-    print(x_coord + ", " + y_coord)
+    print_str = "%f %f\n" % (x_coord, y_coord)
+    print(print_str)    
 # print(first_line)
 # while True:
 #     line = f.readline().strip()
@@ -28,5 +30,7 @@ for i in range(num_vertices):
 # f.close()
 
 fig, ax = plt.subplots()
-ax.scatter(x_coords, y_coords)
+# plt.xlim([0, 1.0])
+# plt.ylim([0, 1.0])
+plt.scatter(x=x_coords, y=y_coords)
 plt.show()

@@ -14,9 +14,12 @@ print("Try holding the 'ctrl' key to move a single vertex.")
 
 plt.show()
 
-with open('test.txt', 'w') as f:
+num_vertices = len(selector2.verts)
+first_line = "%d\n" % num_vertices
+with open('verts.txt', 'w') as f:
+    f.write(first_line)
     for vert in selector2.verts:
-        line = "%f %f" % (vert[0], vert[1])
+        line = "%f %f\n" % (vert[0], vert[1])
         f.write(line)        
         print(line)
         
