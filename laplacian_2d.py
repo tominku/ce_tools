@@ -11,7 +11,8 @@ f = open(poly_file, 'r')
 first_line = f.readline().strip()
 num_vertices = int(first_line.split(" ")[0])
 print('num_vertices: %d' % num_vertices)
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8, 8))
+ax.axis('equal')
 
 def circumcenter(p1, p2, p3):    
     ax = p1[0]
@@ -95,6 +96,7 @@ def vertIdxToVert(vertIdx):
     return np.array((x, y))
 
 A = np.zeros(shape=(num_vertices, num_vertices))
+b = np.zeros(shape=(num_vertices,))
 
 for vert_index in vertIdxToNeighVertIndexToCCs.keys():
     neighVertIdxToCCs = vertIdxToNeighVertIndexToCCs[vert_index]
@@ -121,6 +123,7 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
 
         s_ij = np.linalg.norm(pt1 - pt2)
         coeff_ij = s_ij / l_ij    
+        A[vert_index][neigh_idx] = -coeff_ij
         sum_coeffs += coeff_ij             
         
         ax.scatter([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='green', zorder=11, s=2)            
@@ -128,6 +131,11 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
 
         ccs = np.array(ccs_for_the_edge)
         surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
+
+    A[vert_index][vert_index] = sum_coeffs
+
+x = np.linalg.solve(A, b)
+print(x)
 
 import matplotlib.tri as mtri
 
