@@ -29,6 +29,7 @@ def circumcenter(p1, p2, p3):
 x_coords = []
 y_coords = []
 list_is_boundary = []
+list_is_diri = []
 for i in range(num_vertices):
     line = f.readline().strip()
     temp = line.split()
@@ -37,8 +38,11 @@ for i in range(num_vertices):
     x_coords.append(x_coord)
     y_coords.append(y_coord)
     is_boundary = int(temp[3])
+    if is_boundary:
+        ax.text(x_coord, y_coord, "%d" % (i+1), zorder=20)
     print_str = "%f %f\n" % (x_coord, y_coord)
     list_is_boundary.append(is_boundary)
+    list_is_diri.append(False)
     #print(print_str)    
 
     if is_boundary:            
@@ -98,7 +102,22 @@ def vertIdxToVert(vertIdx):
 A = np.zeros(shape=(num_vertices, num_vertices))
 b = np.zeros(shape=(num_vertices,))
 
+diri_condition = np.zeros(shape=(len(list_is_diri,)))
+list_is_diri[4] = True
+list_is_diri[5] = True
+list_is_diri[6] = True
+list_is_diri[7] = True
+diri_condition[4:8] = 1.0
+list_is_diri[19] = True
+list_is_diri[20] = True
+list_is_diri[21] = True
+diri_condition[19:22] = 0.0
+
 for vert_index in vertIdxToNeighVertIndexToCCs.keys():
+    if list_is_diri[vert_index]:
+        A[vert_index][vert_index] = 1.0
+        b[vert_index] = diri_condition[vert_index]
+        continue
     neighVertIdxToCCs = vertIdxToNeighVertIndexToCCs[vert_index]
     #neigh_vert_indices = neighVertIdxToCCs.keys()
     #print(len(edgeIdToCCs.keys()))
