@@ -10,7 +10,7 @@ poly_file = directory + "/%s.node" % exp_name
 f = open(poly_file, 'r')
 first_line = f.readline().strip()
 num_vertices = int(first_line.split(" ")[0])
-print(num_vertices)
+print('num_vertices: %d' % num_vertices)
 fig, ax = plt.subplots()
 
 def circumcenter(p1, p2, p3):    
@@ -23,7 +23,7 @@ def circumcenter(p1, p2, p3):
     d = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by))
     ux = ((ax * ax + ay * ay) * (by - cy) + (bx * bx + by * by) * (cy - ay) + (cx * cx + cy * cy) * (ay - by)) / d
     uy = ((ax * ax + ay * ay) * (cx - bx) + (bx * bx + by * by) * (ax - cx) + (cx * cx + cy * cy) * (bx - ax)) / d
-    return (ux, uy)
+    return np.array((ux, uy))
 
 x_coords = []
 y_coords = []
@@ -56,7 +56,7 @@ print('num_elements: %d' % num_elements)
 # print('num_edges:  ', num_edges)
 
 triangles = []
-vertIdxToEdges = {}
+vertIdxToNeighVertIndices = {}
 for i in range(num_elements):
     line = f.readline().strip()
     temp = line.split()    
@@ -70,29 +70,41 @@ for i in range(num_elements):
     triangles.append(triangle)
     vert_indices = [vert_idx1, vert_idx2, vert_idx3]
     for vert_index in vert_indices:
-        if vert_index not in vertIdxToEdges:
-            vertIdxToEdges[vert_index] = {}
+        if vert_index not in vertIdxToNeighVertIndices:
+            vertIdxToNeighVertIndices[vert_index] = {}
         for vert_neigh_index in vert_indices:
             if vert_neigh_index == vert_index:
                 continue
             else:
-                edge = [vert_index, vert_neigh_index]
-                edgeID = "%d, %d" % (vert_index, vert_neigh_index)
-                if edgeID not in vertIdxToEdges[vert_index]: 
-                    vertIdxToEdges[vert_index][edgeID] = []
+                #edge = [vert_index, vert_neigh_index]
+                #neighIdx = "%d %d" % (vert_index, vert_neigh_index)
+                #neigh_vert_idx = vert_neigh_index
+                if vert_neigh_index not in vertIdxToNeighVertIndices[vert_index]: 
+                    vertIdxToNeighVertIndices[vert_index][vert_neigh_index] = []
                 #vertIdxToEdges[vert_index][edgeID].append(triangle)
-                vertIdxToEdges[vert_index][edgeID].append(cc)
+                vertIdxToNeighVertIndices[vert_index][vert_neigh_index].append(cc)
     
     #print(triangle)
     #print("triangle: %d %d %d" % (int(temp[0]), int(temp[1]), int(temp[2])))
 
 #print(vertIdxToEdges)
 
-for vert_index in vertIdxToEdges.keys():
-    edgeIdToCCs = vertIdxToEdges[vert_index]
+def vertIdxToVert(vertIdx):
+    x = x_coords[vertIdx]
+    y = y_coords[vertIdx]
+    return np.array((x, y))
+
+A = np.zeros(shape=(num_vertices, num_vertices))
+
+for vert_index in vertIdxToNeighVertIndices.keys():
+    neighVertIdxToCCs = vertIdxToNeighVertIndices[vert_index]
     #print(len(edgeIdToCCs.keys()))
-    for edgeID in edgeIdToCCs.keys():
-        ccs_for_the_edge = edgeIdToCCs[edgeID]
+    vert = vertIdxToVert(vert_index)
+    for neighIdx in neighVertIdxToCCs.keys():
+        vert_neigh = vertIdxToVert(neighIdx)
+        ccs_for_the_edge = neighVertIdxToCCs[neighIdx]
+        if len(ccs_for_the_edge) < 2:
+            continue
         #print(len(ccs_for_the_edge))
         xs_of_ccs = []
         ys_of_ccs = []
@@ -103,6 +115,9 @@ for vert_index in vertIdxToEdges.keys():
         ax.scatter(xs_of_ccs, ys_of_ccs, c='green', zorder=11, s=2)            
         ax.plot(xs_of_ccs, ys_of_ccs, c='blue', zorder=12)            
 
+        ccs = np.array(ccs_for_the_edge)
+        surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
+
 import matplotlib.tri as mtri
 
 triang = mtri.Triangulation(x_coords, y_coords, triangles)
@@ -112,28 +127,6 @@ ax.triplot(triang, 'ko-', zorder=1)
 
 plt.xlim([0, 1.0])
 plt.ylim([0, 1.0])
-
-# node_file = directory + "/%s.node" % exp_name
-
-# f = open(edge_file, 'r')
-# first_line = f.readline().strip()
-# num_edges = int(first_line.split()[0])
-# print('num_edges: %d' % num_edges)
-
-# for i in range(num_edges):
-#     line = f.readline().strip()
-#     temp = line.split()    
-#     is_boundary = int(temp[3])
-#     if is_boundary:
-#         vertex1_index = int(temp[1])
-#         vertex2_index = int(temp[2])
-#         print("is_boundary: %d" % is_boundary)
-#         boundary_points_x = [x_coords[vertex1_index], x_coords[vertex2_index]]
-#         boundary_points_y = [y_coords[vertex1_index], y_coords[vertex2_index]]
-#         ax.scatter(boundary_points_x, boundary_points_y, c='red', zorder=2)
-#     #temp[1]
-#     #temp[2]
-    
 
 
 plt.show()
