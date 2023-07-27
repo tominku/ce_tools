@@ -56,7 +56,7 @@ print('num_elements: %d' % num_elements)
 # print('num_edges:  ', num_edges)
 
 triangles = []
-vertIdxToNeighVertIndices = {}
+vertIdxToNeighVertIndexToCCs = {}
 for i in range(num_elements):
     line = f.readline().strip()
     temp = line.split()    
@@ -70,8 +70,8 @@ for i in range(num_elements):
     triangles.append(triangle)
     vert_indices = [vert_idx1, vert_idx2, vert_idx3]
     for vert_index in vert_indices:
-        if vert_index not in vertIdxToNeighVertIndices:
-            vertIdxToNeighVertIndices[vert_index] = {}
+        if vert_index not in vertIdxToNeighVertIndexToCCs:
+            vertIdxToNeighVertIndexToCCs[vert_index] = {}
         for vert_neigh_index in vert_indices:
             if vert_neigh_index == vert_index:
                 continue
@@ -79,10 +79,10 @@ for i in range(num_elements):
                 #edge = [vert_index, vert_neigh_index]
                 #neighIdx = "%d %d" % (vert_index, vert_neigh_index)
                 #neigh_vert_idx = vert_neigh_index
-                if vert_neigh_index not in vertIdxToNeighVertIndices[vert_index]: 
-                    vertIdxToNeighVertIndices[vert_index][vert_neigh_index] = []
+                if vert_neigh_index not in vertIdxToNeighVertIndexToCCs[vert_index]: 
+                    vertIdxToNeighVertIndexToCCs[vert_index][vert_neigh_index] = []
                 #vertIdxToEdges[vert_index][edgeID].append(triangle)
-                vertIdxToNeighVertIndices[vert_index][vert_neigh_index].append(cc)
+                vertIdxToNeighVertIndexToCCs[vert_index][vert_neigh_index].append(cc)
     
     #print(triangle)
     #print("triangle: %d %d %d" % (int(temp[0]), int(temp[1]), int(temp[2])))
@@ -96,24 +96,35 @@ def vertIdxToVert(vertIdx):
 
 A = np.zeros(shape=(num_vertices, num_vertices))
 
-for vert_index in vertIdxToNeighVertIndices.keys():
-    neighVertIdxToCCs = vertIdxToNeighVertIndices[vert_index]
+for vert_index in vertIdxToNeighVertIndexToCCs.keys():
+    neighVertIdxToCCs = vertIdxToNeighVertIndexToCCs[vert_index]
+    #neigh_vert_indices = neighVertIdxToCCs.keys()
     #print(len(edgeIdToCCs.keys()))
     vert = vertIdxToVert(vert_index)
-    for neighIdx in neighVertIdxToCCs.keys():
-        vert_neigh = vertIdxToVert(neighIdx)
-        ccs_for_the_edge = neighVertIdxToCCs[neighIdx]
-        if len(ccs_for_the_edge) < 2:
+    sum_coeffs = 0.0
+    for neigh_idx in neighVertIdxToCCs.keys():
+        neigh_vert = vertIdxToVert(neigh_idx)
+        l_ij = np.linalg.norm(neigh_vert - vert)
+        is_boundary_edge = False
+        if list_is_boundary[vert_index] and list_is_boundary[neigh_idx]:
+            is_boundary_edge = True
+                                
+        ccs_for_the_edge = neighVertIdxToCCs[neigh_idx]       
+        pt1 = ccs_for_the_edge[0]
+        pt2 = []
+        if len(ccs_for_the_edge) < 2: # boundary edge
+            center_of_two_verts = (vert + neigh_vert) / 2.0
+            pt2 = center_of_two_verts            
             continue
-        #print(len(ccs_for_the_edge))
-        xs_of_ccs = []
-        ys_of_ccs = []
-        for cc in ccs_for_the_edge:
-            xs_of_ccs.append(cc[0])
-            ys_of_ccs.append(cc[1])
-            #ax.scatter(cc[0], cc[1], c='green', zorder=11, s=2)            
-        ax.scatter(xs_of_ccs, ys_of_ccs, c='green', zorder=11, s=2)            
-        ax.plot(xs_of_ccs, ys_of_ccs, c='blue', zorder=12)            
+        else:
+            pt2 = ccs_for_the_edge[1]       
+
+        s_ij = np.linalg.norm(pt1 - pt2)
+        coeff_ij = s_ij / l_ij    
+        sum_coeffs += coeff_ij             
+        
+        ax.scatter([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='green', zorder=11, s=2)            
+        ax.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='blue', zorder=12)            
 
         ccs = np.array(ccs_for_the_edge)
         surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
