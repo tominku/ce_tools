@@ -36,13 +36,13 @@ for i in range(num_vertices):
 diri_condition = np.zeros(shape=(num_vertices,))
 list_is_diri[4] = True
 list_is_diri[5] = True
+list_is_diri[105] = True
 list_is_diri[6] = True
-list_is_diri[7] = True
-diri_condition[4:8] = 1.0
+diri_condition[[4, 5, 105, 6]] = 1.0
 list_is_diri[19] = True
+list_is_diri[154] = True
 list_is_diri[20] = True
-list_is_diri[21] = True
-diri_condition[19:22] = 0.0
+diri_condition[[19, 154, 20]] = 0.0
 
 for i in range(num_vertices):
     line = f.readline().strip()

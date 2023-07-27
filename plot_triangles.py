@@ -139,3 +139,5 @@ plt.ylim([0, 1.0])
 plt.show()
 
 # plt.show()
+
+#triangle -peqD a0.001 hand_drawing.poly
