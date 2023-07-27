@@ -31,6 +31,20 @@ y_coords = []
 list_is_boundary = []
 list_is_diri = []
 for i in range(num_vertices):
+    list_is_diri.append(False)
+
+diri_condition = np.zeros(shape=(num_vertices,))
+list_is_diri[4] = True
+list_is_diri[5] = True
+list_is_diri[6] = True
+list_is_diri[7] = True
+diri_condition[4:8] = 1.0
+list_is_diri[19] = True
+list_is_diri[20] = True
+list_is_diri[21] = True
+diri_condition[19:22] = 0.0
+
+for i in range(num_vertices):
     line = f.readline().strip()
     temp = line.split()
     x_coord = float(temp[1])
@@ -38,15 +52,20 @@ for i in range(num_vertices):
     x_coords.append(x_coord)
     y_coords.append(y_coord)
     is_boundary = int(temp[3])
-    if is_boundary:
-        ax.text(x_coord, y_coord, "%d" % (i+1), zorder=20)
+    if is_boundary:            
+        ax.text(x_coord, y_coord, "%d" % (i+1), color='black', zorder=20)
     print_str = "%f %f\n" % (x_coord, y_coord)
     list_is_boundary.append(is_boundary)
-    list_is_diri.append(False)
+    #list_is_diri.append(False)
     #print(print_str)    
 
-    if is_boundary:            
-        ax.scatter(x_coord, y_coord, c='red', zorder=2)    
+    if is_boundary:        
+        color = "red"
+        if list_is_diri[i]:    
+             color = "green"                   
+        
+        ax.scatter(x_coord, y_coord, c=color, zorder=2)    
+
 
 
 ele_file = directory + "/%s.ele" % exp_name
@@ -102,16 +121,6 @@ def vertIdxToVert(vertIdx):
 A = np.zeros(shape=(num_vertices, num_vertices))
 b = np.zeros(shape=(num_vertices,))
 
-diri_condition = np.zeros(shape=(len(list_is_diri,)))
-list_is_diri[4] = True
-list_is_diri[5] = True
-list_is_diri[6] = True
-list_is_diri[7] = True
-diri_condition[4:8] = 1.0
-list_is_diri[19] = True
-list_is_diri[20] = True
-list_is_diri[21] = True
-diri_condition[19:22] = 0.0
 
 for vert_index in vertIdxToNeighVertIndexToCCs.keys():
     if list_is_diri[vert_index]:
@@ -154,7 +163,6 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
     A[vert_index][vert_index] = sum_coeffs
 
 x = np.linalg.solve(A, b)
-print(x)
 
 import matplotlib.tri as mtri
 
@@ -166,7 +174,15 @@ ax.triplot(triang, 'ko-', zorder=1)
 plt.xlim([0, 1.0])
 plt.ylim([0, 1.0])
 
+plt.show()
 
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+cmhot = plt.get_cmap("hot")
+p = ax.scatter(x_coords, y_coords, x, c=x, cmap=cmhot)
+print(x)
+
+fig.colorbar(p)
 plt.show()
 
 # plt.show()
