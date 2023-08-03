@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 directory = os.getcwd()
 
-exp_name = "hand_drawing.1"
+exp_name = "rect_boundary.1"
 poly_file = directory + "/%s.node" % exp_name
 
 f = open(poly_file, 'r')
@@ -12,13 +12,27 @@ first_line = f.readline().strip()
 num_vertices = int(first_line.split(" ")[0])
 print('num_vertices: %d' % num_vertices)
 
-bc1 = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 0.0, 154: 0.0, 20: 0.0, "name": "bc1"}
-bc2 = {4: 0.0, 5: 0.0, 105: 0.0, 6: 0.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc2"}
+#bc1 = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 0.0, 154: 0.0, 20: 0.0, "name": "bc1"}
+bc1 = {"name": "bc1"}
+#bc2 = {4: 0.0, 5: 0.0, 105: 0.0, 6: 0.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc2"}
+bc2 = {"name": "bc2"}
 bc_sum = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc_sum"}
+
+#bc1 = {}
+
+for i in range(20, 30 + 1):
+    bc1[i] = 1.0
+
+for i in range(70, 88 + 1):
+    bc1[i] = 0.0    
+
+#20~69
+#69~88
 
 #bc = bc2
 #bc = bc1 
-bc = bc_sum
+bc = bc1
+
 
 fig, ax = plt.subplots(figsize=(8, 8))
 
@@ -139,7 +153,7 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
         if len(ccs_for_the_edge) < 2: # boundary edge
             center_of_two_verts = (vert + neigh_vert) / 2.0
             pt2 = center_of_two_verts            
-            #continue
+            continue
         else:
             pt2 = ccs_for_the_edge[1]       
 
@@ -151,8 +165,8 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
         ax.scatter([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='green', zorder=11, s=2)            
         ax.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='blue', zorder=12)            
 
-        #ccs = np.array(ccs_for_the_edge)
-        #surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
+        ccs = np.array(ccs_for_the_edge)
+        surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
 
     A[vert_index][vert_index] = sum_coeffs
 

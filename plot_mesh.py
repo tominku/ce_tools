@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 directory = os.getcwd()
 
-exp_name = "hand_drawing.1"
+#exp_name = "hand_drawing.1"
+exp_name = "rect_boundary.1"
 poly_file = directory + "/%s.node" % exp_name
 
 f = open(poly_file, 'r')
@@ -12,6 +13,7 @@ first_line = f.readline().strip()
 num_vertices = int(first_line.split(" ")[0])
 print(num_vertices)
 fig, ax = plt.subplots()
+ax.axis('equal')
 
 def circumcenter(p1, p2, p3):    
     ax = p1[0]
@@ -41,7 +43,8 @@ for i in range(num_vertices):
     #print(print_str)    
 
     if is_boundary:            
-        ax.scatter(x_coord, y_coord, c='red', zorder=2)    
+        ax.scatter(x_coord, y_coord, c='red', zorder=2)
+        ax.text(x_coord, y_coord, "%d" % (i+1), color='black', zorder=20)    
 
 
 ele_file = directory + "/%s.ele" % exp_name
@@ -100,7 +103,7 @@ for vert_index in vertIdxToEdges.keys():
             xs_of_ccs.append(cc[0])
             ys_of_ccs.append(cc[1])
             #ax.scatter(cc[0], cc[1], c='green', zorder=11, s=2)            
-        ax.scatter(xs_of_ccs, ys_of_ccs, c='green', zorder=11, s=2)            
+        ax.scatter(xs_of_ccs, ys_of_ccs, c='green', zorder=14, s=20)            
         ax.plot(xs_of_ccs, ys_of_ccs, c='blue', zorder=12)            
 
 import matplotlib.tri as mtri
@@ -110,8 +113,8 @@ plt.title("Mesh")
 #ax.triplot(triang, 'ko-')
 ax.triplot(triang, 'ko-', zorder=1)
 
-plt.xlim([0, 1.0])
-plt.ylim([0, 1.0])
+#plt.xlim([0, 1.0])
+#plt.ylim([0, 1.0])
 
 # node_file = directory + "/%s.node" % exp_name
 
