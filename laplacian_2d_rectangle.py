@@ -183,9 +183,13 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
     if not is_diri_conditioned(vert_index):
         A[vert_index][vert_index] = sum_coeffs
 
-x = np.linalg.solve(A, b)
-np.save(f'laplace_2d_sol_bc_{bc["name"]}', x)
-np.savetxt(f'laplace_2d_sol_bc_{bc["name"]}', x)
+sol = np.linalg.solve(A, b)
+np.save(f'laplace_2d_sol_bc_{bc["name"]}', sol)
+np.savetxt(f'laplace_2d_sol_bc_{bc["name"]}', sol)
+
+for x_coord, y_coord, z in zip(x_coords, y_coords, sol):                    
+    exact_z = (np.sin(x_coord)/np.sin(width))*(np.sinh(y_coord)/np.sinh(height))
+    print(f'error: {np.abs(z - exact_z)}')
 
 import matplotlib.tri as mtri
 
@@ -202,7 +206,7 @@ ax.triplot(triang, 'ko-', zorder=1)
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 cmhot = plt.get_cmap("hot")
-p = ax.scatter(x_coords, y_coords, x, c=x, cmap=cmhot)
+p = ax.scatter(x_coords, y_coords, sol, c=sol, cmap=cmhot)
 #print(x)
 
 fig.colorbar(p)
