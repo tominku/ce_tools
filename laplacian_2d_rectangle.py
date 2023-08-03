@@ -187,9 +187,18 @@ sol = np.linalg.solve(A, b)
 np.save(f'laplace_2d_sol_bc_{bc["name"]}', sol)
 np.savetxt(f'laplace_2d_sol_bc_{bc["name"]}', sol)
 
+max_error = 0.0
+error_list = []
 for x_coord, y_coord, z in zip(x_coords, y_coords, sol):                    
-    exact_z = (np.sin(x_coord)/np.sin(width))*(np.sinh(y_coord)/np.sinh(height))
-    print(f'error: {np.abs(z - exact_z)}')
+    exact_z = (np.sin(x_coord)/np.sin(width))*(np.sinh(y_coord)/np.sinh(height))        
+    error = np.abs(z - exact_z)
+    if error > max_error:
+        max_error = error
+    error_list.append(error)
+    #print(f'error: {error}')
+
+print(f'max error: {max_error}')
+print(f'avg error: {np.mean(error_list)}')
 
 import matplotlib.tri as mtri
 

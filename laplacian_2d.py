@@ -17,8 +17,8 @@ bc2 = {4: 0.0, 5: 0.0, 105: 0.0, 6: 0.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc
 bc_sum = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc_sum"}
 
 #bc = bc2
-#bc = bc1 
-bc = bc_sum
+bc = bc1 
+#bc = bc_sum
 
 fig, ax = plt.subplots(figsize=(8, 8))
 
