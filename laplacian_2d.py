@@ -11,8 +11,19 @@ f = open(poly_file, 'r')
 first_line = f.readline().strip()
 num_vertices = int(first_line.split(" ")[0])
 print('num_vertices: %d' % num_vertices)
+
+bc1 = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 0.0, 154: 0.0, 20: 0.0, "name": "bc1"}
+bc2 = {4: 0.0, 5: 0.0, 105: 0.0, 6: 0.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc2"}
+bc_sum = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc_sum"}
+
+#bc = bc2
+#bc = bc1 
+bc = bc_sum
+
 fig, ax = plt.subplots(figsize=(8, 8))
-ax.axis('equal')
+
+def is_diri_conditioned(vert_index):
+    return vert_index in bc.keys()
 
 def circumcenter(p1, p2, p3):    
     ax = p1[0]
@@ -29,20 +40,6 @@ def circumcenter(p1, p2, p3):
 x_coords = []
 y_coords = []
 list_is_boundary = []
-list_is_diri = []
-for i in range(num_vertices):
-    list_is_diri.append(False)
-
-diri_condition = np.zeros(shape=(num_vertices,))
-list_is_diri[4] = True
-list_is_diri[5] = True
-list_is_diri[105] = True
-list_is_diri[6] = True
-diri_condition[[4, 5, 105, 6]] = 1.0
-list_is_diri[19] = True
-list_is_diri[154] = True
-list_is_diri[20] = True
-diri_condition[[19, 154, 20]] = 0.0
 
 for i in range(num_vertices):
     line = f.readline().strip()
@@ -61,7 +58,7 @@ for i in range(num_vertices):
 
     if is_boundary:        
         color = "red"
-        if list_is_diri[i]:    
+        if is_diri_conditioned(i):    
              color = "green"                   
         
         ax.scatter(x_coord, y_coord, c=color, zorder=2)    
@@ -75,9 +72,6 @@ first_line = f.readline().strip()
 num_elements = int(first_line.split()[0])
 print('num_elements: %d' % num_elements)
 
-#line = f.readline().strip()
-# num_edges = int(line.split(" ")[0])
-# print('num_edges:  ', num_edges)
 
 triangles = []
 vertIdxToNeighVertIndexToCCs = {}
@@ -123,9 +117,9 @@ b = np.zeros(shape=(num_vertices,))
 
 
 for vert_index in vertIdxToNeighVertIndexToCCs.keys():
-    if list_is_diri[vert_index]:
+    if is_diri_conditioned(vert_index):
         A[vert_index][vert_index] = 1.0
-        b[vert_index] = diri_condition[vert_index]
+        b[vert_index] = bc[vert_index]
         continue
     neighVertIdxToCCs = vertIdxToNeighVertIndexToCCs[vert_index]
     #neigh_vert_indices = neighVertIdxToCCs.keys()
@@ -163,8 +157,12 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
     A[vert_index][vert_index] = sum_coeffs
 
 x = np.linalg.solve(A, b)
+np.save(f'laplace_2d_sol_bc_{bc["name"]}', x)
+np.savetxt(f'laplace_2d_sol_bc_{bc["name"]}', x)
 
 import matplotlib.tri as mtri
+
+ax.axis('equal')
 
 triang = mtri.Triangulation(x_coords, y_coords, triangles)
 plt.title("Mesh")
@@ -173,8 +171,6 @@ ax.triplot(triang, 'ko-', zorder=1)
 
 plt.xlim([0, 1.0])
 plt.ylim([0, 1.0])
-
-plt.show()
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
