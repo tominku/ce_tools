@@ -20,10 +20,10 @@ bc_sum = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": 
 
 #bc1 = {}
 
-for i in range(20, 30 + 1):
+for i in range(20 - 1, 69 - 1 + 1):
     bc1[i] = 1.0
 
-for i in range(70, 88 + 1):
+for i in range(70 - 1, 88 - 1 + 1):
     bc1[i] = 0.0    
 
 #20~69
@@ -33,6 +33,7 @@ for i in range(70, 88 + 1):
 #bc = bc1 
 bc = bc1
 
+do_plot_mesh = False
 
 fig, ax = plt.subplots(figsize=(8, 8))
 
@@ -134,7 +135,7 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
     if is_diri_conditioned(vert_index):
         A[vert_index][vert_index] = 1.0
         b[vert_index] = bc[vert_index]
-        continue
+        
     neighVertIdxToCCs = vertIdxToNeighVertIndexToCCs[vert_index]
     #neigh_vert_indices = neighVertIdxToCCs.keys()
     #print(len(edgeIdToCCs.keys()))
@@ -153,22 +154,24 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
         if len(ccs_for_the_edge) < 2: # boundary edge
             center_of_two_verts = (vert + neigh_vert) / 2.0
             pt2 = center_of_two_verts            
-            continue
+            #continue
         else:
             pt2 = ccs_for_the_edge[1]       
 
-        s_ij = np.linalg.norm(pt1 - pt2)
-        coeff_ij = s_ij / l_ij    
-        A[vert_index][neigh_idx] = -coeff_ij
-        sum_coeffs += coeff_ij             
+        if not is_diri_conditioned(vert_index):
+            s_ij = np.linalg.norm(pt1 - pt2)
+            coeff_ij = s_ij / l_ij    
+            A[vert_index][neigh_idx] = -coeff_ij
+            sum_coeffs += coeff_ij             
         
-        ax.scatter([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='green', zorder=11, s=2)            
-        ax.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='blue', zorder=12)            
+        if do_plot_mesh:
+            ax.scatter([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='green', zorder=11, s=2)            
+            ax.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='blue', zorder=12)            
 
-        ccs = np.array(ccs_for_the_edge)
-        surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
-
-    A[vert_index][vert_index] = sum_coeffs
+        #ccs = np.array(ccs_for_the_edge)
+        #surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
+    if not is_diri_conditioned(vert_index):
+        A[vert_index][vert_index] = sum_coeffs
 
 x = np.linalg.solve(A, b)
 np.save(f'laplace_2d_sol_bc_{bc["name"]}', x)
@@ -183,8 +186,8 @@ plt.title("Mesh")
 #ax.triplot(triang, 'ko-')
 ax.triplot(triang, 'ko-', zorder=1)
 
-plt.xlim([0, 1.0])
-plt.ylim([0, 1.0])
+#plt.xlim([0, 1.0])
+#plt.ylim([0, 1.0])
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')

@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 width = 2.5 * np.pi
 height = np.pi
 
-nx = 10 
-ny = 5
+nx = 50 
+ny = 20
 
 walls = []
 
@@ -54,6 +54,7 @@ for wall in walls:
 print(num_vertices)
 assert(num_vertices == len(verts))
 
+ax.axis('equal')
 ax.scatter(xs, ys, s=5, c="blue")
 
 do_add_random_points = True
