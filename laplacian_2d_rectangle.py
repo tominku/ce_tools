@@ -18,13 +18,8 @@ bc1 = {"name": "bc1"}
 bc2 = {"name": "bc2"}
 bc_sum = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc_sum"}
 
+bc = bc1
 #bc1 = {}
-
-for i in range(20 - 1, 69 - 1 + 1):
-    bc1[i] = 1.0
-
-for i in range(70 - 1, 88 - 1 + 1):
-    bc1[i] = 0.0    
 
 #20~69
 #69~88
@@ -65,6 +60,7 @@ for i in range(num_vertices):
     y_coords.append(y_coord)
     is_boundary = int(temp[3])
     if is_boundary:            
+        bc[i] = 0.0
         ax.text(x_coord, y_coord, "%d" % (i+1), color='black', zorder=20)
     print_str = "%f %f\n" % (x_coord, y_coord)
     list_is_boundary.append(is_boundary)
@@ -78,6 +74,20 @@ for i in range(num_vertices):
         
         ax.scatter(x_coord, y_coord, c=color, zorder=2)    
 
+width = 2.5 * np.pi
+height = np.pi
+top_wall_bc_indices = range(20 - 1, 69 - 1 + 1)
+right_wall_bc_indices = range(70 - 1, 88 - 1 + 1)
+
+for i in top_wall_bc_indices:
+    physical_x = width * (i - top_wall_bc_indices[0]) / (top_wall_bc_indices[-1] - top_wall_bc_indices[0])
+    bc[i] = np.sin(physical_x) / np.sin(width)
+    #print(f'physical_x: {physical_x}')
+
+for i in right_wall_bc_indices:
+    physical_y = height * (1.0 - (i - right_wall_bc_indices[0]) / (right_wall_bc_indices[-1] - right_wall_bc_indices[0]))
+    bc[i] = np.sinh(physical_y) / np.sinh(height) 
+    print(f'physical_y: {physical_y}')
 
 
 ele_file = directory + "/%s.ele" % exp_name
@@ -193,7 +203,7 @@ fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 cmhot = plt.get_cmap("hot")
 p = ax.scatter(x_coords, y_coords, x, c=x, cmap=cmhot)
-print(x)
+#print(x)
 
 fig.colorbar(p)
 plt.show()
