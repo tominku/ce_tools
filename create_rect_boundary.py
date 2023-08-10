@@ -34,13 +34,17 @@ walls.append(top_wall)
 walls.append(right_wall)
 walls.append(bottom_wall)
 
+dic_walls = {'left_wall':left_wall, 'top_wall':top_wall, 'right_wall':right_wall, 'bottom_wall':bottom_wall}
+
 
 num_vertices = 0
 verts = []
 xs = []
 ys = []
 fig, ax = plt.subplots(figsize=(8, 8))
-for wall in walls:
+
+for key, val in dic_walls.items():
+    wall = dic_walls[key]
     num_points = wall.shape[1]
     num_vertices += num_points
     for i in range(num_points):
@@ -50,6 +54,17 @@ for wall in walls:
         verts.append(vert)
         xs.append(x)
         ys.append(y)        
+
+# for wall in walls:
+#     num_points = wall.shape[1]
+#     num_vertices += num_points
+#     for i in range(num_points):
+#         x = wall[0, i]
+#         y = wall[1, i]
+#         vert = (x, y)
+#         verts.append(vert)
+#         xs.append(x)
+#         ys.append(y)        
 
 print(num_vertices)
 assert(num_vertices == len(verts))
