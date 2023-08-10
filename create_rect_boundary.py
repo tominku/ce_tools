@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 width = 2.5 * np.pi
 height = np.pi
 
-nx = 50 
-ny = 20
+nx = 80 
+ny = 40
 
 walls = []
 

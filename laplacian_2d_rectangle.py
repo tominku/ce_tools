@@ -19,6 +19,8 @@ bc2 = {"name": "bc2"}
 bc_sum = {4: 1.0, 5: 1.0, 105: 1.0, 6: 1.0, 19: 1.0, 154: 1.0, 20: 1.0, "name": "bc_sum"}
 
 bc = bc1
+
+bc = {}
 #bc1 = {}
 
 #20~69
@@ -29,6 +31,9 @@ bc = bc1
 bc = bc1
 
 do_plot_mesh = False
+
+width = 2.5 * np.pi
+height = np.pi
 
 fig, ax = plt.subplots(figsize=(8, 8))
 
@@ -74,8 +79,7 @@ for i in range(num_vertices):
         
         ax.scatter(x_coord, y_coord, c=color, zorder=2)    
 
-width = 2.5 * np.pi
-height = np.pi
+
 top_wall_bc_indices = range(20 - 1, 69 - 1 + 1)
 right_wall_bc_indices = range(70 - 1, 88 - 1 + 1)
 
