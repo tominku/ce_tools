@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 directory = os.getcwd()
 
+#triangle -peqDY -a0.01 rect_boundary.poly
+
 exp_name = "rect_boundary.1"
 poly_file = directory + "/%s.node" % exp_name
 
@@ -173,8 +175,8 @@ for vert_index in vertIdxToNeighVertIndexToCCs.keys():
             sum_coeffs += coeff_ij             
         
         if do_plot_mesh:
-            ax.scatter([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='green', zorder=11, s=2)            
-            ax.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='blue', zorder=12)            
+            ax.scatter([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='green', zorder=11, s=1)            
+            ax.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], c='blue', zorder=12, s=1)            
 
         #ccs = np.array(ccs_for_the_edge)
         #surface_len = np.linalg.norm(ccs[0, :] - ccs[1, :])
@@ -219,7 +221,6 @@ ax.axis('equal')
 
 triang = mtri.Triangulation(x_coords, y_coords, triangles)
 plt.title("Mesh")
-#ax.triplot(triang, 'ko-')
 ax.triplot(triang, 'ko-', zorder=1)
 
 #plt.xlim([0, 1.0])

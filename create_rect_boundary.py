@@ -7,8 +7,11 @@ height = np.pi
 nx = 20 
 ny = 10
 
-# nx = 80 
-# ny = 40
+# nx = 40 
+# ny = 20
+
+# nx = 60 
+# ny = 30
 
 walls = []
 
@@ -125,3 +128,5 @@ with open('rect_boundary.poly', 'w') as f:
 
 
 plt.show()
+
+#triangle -peqDY -a0.01 rect_boundary.poly
