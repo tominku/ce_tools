@@ -4,8 +4,11 @@ import matplotlib.pyplot as plt
 width = 2.5 * np.pi
 height = np.pi
 
-nx = 80 
-ny = 40
+nx = 20 
+ny = 10
+
+# nx = 80 
+# ny = 40
 
 walls = []
 
@@ -42,7 +45,10 @@ verts = []
 xs = []
 ys = []
 fig, ax = plt.subplots(figsize=(8, 8))
+top_wall_indices = []
+right_wall_indices = []
 
+vert_index = 0
 for key, val in dic_walls.items():
     wall = dic_walls[key]
     num_points = wall.shape[1]
@@ -50,11 +56,18 @@ for key, val in dic_walls.items():
     for i in range(num_points):
         x = wall[0, i]
         y = wall[1, i]
+        vert_index += 1
+        if key is 'top_wall':
+            top_wall_indices.append(int(vert_index))
+        elif key is 'right_wall':            
+            right_wall_indices.append(int(vert_index))
         vert = (x, y)
-        verts.append(vert)
+        verts.append(vert)        
         xs.append(x)
         ys.append(y)        
 
+np.savetxt('top_wall_indices.txt', top_wall_indices, '%d')
+np.savetxt('right_wall_indices.txt', right_wall_indices, '%d')
 # for wall in walls:
 #     num_points = wall.shape[1]
 #     num_vertices += num_points
